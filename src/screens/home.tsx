@@ -1,27 +1,46 @@
 import { View, FlatList, StyleSheet } from "react-native";
 import React from "react";
-import { sequentialEventsType } from "../types";
 import { computedSequentialEvents } from "../utils/helpers";
 import events from "../data/events";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SafeAreaView } from "react-native";
-import ActivityEvent from "../components/activity-event";
+import ActivityTile from "../components/activity-tile";
+import CommentTile from "../components/comment-tile";
 
 export default function Home() {
-	const [computedEvents, setComputedEvents] = React.useState<sequentialEventsType[]>([]);
-	const [selectedEvents, setSelectedEvents] = React.useState<string[]>([]);
-	const insets = useSafeAreaInsets();
+	const computedEvents = React.useMemo(() => computedSequentialEvents(events), []);
+	const [selectedEvents, setSelectedEvents] = React.useState<number[]>([]);
 
-	React.useEffect(() => {
-		setComputedEvents(computedSequentialEvents(events));
-	}, []);
+	const toggleSelect = (index: number) => {
+		if (selectedEvents.includes(index)) {
+			const updatedSelectedEvents = selectedEvents.filter((i) => i !== index);
+			setSelectedEvents(updatedSelectedEvents);
+			return;
+		}
+
+		setSelectedEvents([index, ...selectedEvents]);
+	};
 
 	return (
 		<SafeAreaView style={styles.safeAreaView}>
 			<FlatList
 				data={computedEvents}
-				keyExtractor={(item, index) => index.toString()}
-				renderItem={({ item }) => <ActivityEvent isSelected={false} event={item} />}
+				keyExtractor={(_, index) => index.toString()}
+				initialNumToRender={6}
+				renderItem={({ item, index }) =>
+					item.type === "comment" ? (
+						<CommentTile
+							isSelected={selectedEvents.includes(index)}
+							event={item}
+							onSelect={() => toggleSelect(index)}
+						/>
+					) : (
+						<ActivityTile
+							isSelected={selectedEvents.includes(index)}
+							event={item}
+							onSelect={() => toggleSelect(index)}
+						/>
+					)
+				}
 				style={styles.listContainer}
 				contentContainerStyle={styles.listContentContainer}
 				ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -40,7 +59,7 @@ const styles = StyleSheet.create({
 	listContentContainer: {
 		backgroundColor: "#fff",
 		padding: 20,
-		paddingBottom: 50,
+		// paddingLeft: 0,
 		// borderWidth: 1,
 		// borderColor: "#EFDFF4",
 		// borderRadius: 32,

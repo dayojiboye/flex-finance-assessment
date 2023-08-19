@@ -3,20 +3,34 @@ import React from "react";
 import AuthorAvatar from "./author-avatar";
 import Icon from "react-native-vector-icons/Octicons";
 import { sequentialEventsType } from "../types";
-import { format, formatDistance, formatRelative, subDays } from "date-fns";
+import { formatDistance } from "date-fns";
+import CircleIcon from "../../assets/circle.svg";
+import CheckmarkIcon from "../../assets/checkmark.svg";
 
 type Props = {
 	isSelected: boolean;
 	event: sequentialEventsType;
+	onSelect: () => void;
 };
 
-export default function ActivityEvent({ isSelected, event }: Props) {
+export default function ActivityTile({ isSelected, event, onSelect }: Props) {
 	return (
 		<>
 			{event.eventData.map((item, index) => (
-				<TouchableOpacity key={index} style={styles.activityContainer}>
+				<TouchableOpacity
+					key={index}
+					activeOpacity={0.7}
+					style={styles.activityContainer}
+					onPress={onSelect}
+				>
 					{index === 0 ? (
-						<Icon name="circle" color="#707070" size={18} />
+						<>
+							{isSelected ? (
+								<CheckmarkIcon width={18} height={18} />
+							) : (
+								<CircleIcon width={18} height={18} />
+							)}
+						</>
 					) : (
 						<View style={{ width: 18, height: 18 }} />
 					)}
