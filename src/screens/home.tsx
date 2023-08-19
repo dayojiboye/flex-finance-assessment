@@ -1,12 +1,14 @@
-import { View, FlatList, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet, TouchableOpacity, Text } from "react-native";
 import React from "react";
 import { computedSequentialEvents } from "../utils/helpers";
 import events from "../data/events";
 import { SafeAreaView } from "react-native";
 import ActivityTile from "../components/activity-tile";
 import CommentTile from "../components/comment-tile";
+import FileIcon from "../../assets/file-icon.svg";
 
 export default function Home() {
+	const [sliceCount, setSliceCount] = React.useState<number>(6);
 	const computedEvents = React.useMemo(() => computedSequentialEvents(events), []);
 	const [selectedEvents, setSelectedEvents] = React.useState<number[]>([]);
 
@@ -20,10 +22,23 @@ export default function Home() {
 		setSelectedEvents([index, ...selectedEvents]);
 	};
 
+	// const showMoreEvents = () => {
+	// 	const nonVisibleCounts = computedEvents.length - sliceCount;
+
+	// 	if (nonVisibleCounts === 0) return;
+
+	// 	if (nonVisibleCounts <= 6) {
+	// 		setSliceCount(sliceCount + nonVisibleCounts);
+	// 		return;
+	// 	}
+
+	// 	setSliceCount(sliceCount + 6);
+	// };
+
 	return (
 		<SafeAreaView style={styles.safeAreaView}>
 			<FlatList
-				data={computedEvents}
+				data={computedEvents.slice(0, sliceCount)}
 				keyExtractor={(_, index) => index.toString()}
 				initialNumToRender={6}
 				renderItem={({ item, index }) =>
@@ -44,6 +59,14 @@ export default function Home() {
 				style={styles.listContainer}
 				contentContainerStyle={styles.listContentContainer}
 				ItemSeparatorComponent={() => <View style={styles.separator} />}
+				ListFooterComponent={() => (
+					<TouchableOpacity style={styles.listFooter}>
+						<FileIcon width={18} height={18} />
+						<Text style={styles.listFooterText}>
+							Show {computedEvents.length - sliceCount} more events
+						</Text>
+					</TouchableOpacity>
+				)}
 			/>
 		</SafeAreaView>
 	);
@@ -75,5 +98,16 @@ const styles = StyleSheet.create({
 	separator: {
 		height: 1,
 		backgroundColor: "#F1E9F5",
+	},
+	listFooter: {
+		flexDirection: "row",
+		gap: 18,
+		alignItems: "center",
+		alignSelf: "flex-start",
+	},
+	listFooterText: {
+		color: "#9D2AF2",
+		fontFamily: "Inter-Regular",
+		fontSize: 14,
 	},
 });

@@ -13,7 +13,7 @@ type Props = {
 	onSelect: () => void;
 };
 
-export default function CommentTile({ isSelected, event, onSelect }: Props) {
+function CommentTile({ isSelected, event, onSelect }: Props) {
 	return (
 		<TouchableOpacity activeOpacity={0.7} style={styles.commentContainer} onPress={onSelect}>
 			<View style={styles.contentContainer}>
@@ -48,10 +48,12 @@ export default function CommentTile({ isSelected, event, onSelect }: Props) {
 	);
 }
 
+export default React.memo(CommentTile);
+
 const styles = StyleSheet.create({
 	commentContainer: {
 		paddingTop: 11,
-		paddingBottom: 16,
+		paddingBottom: 18,
 		gap: 14,
 	},
 	contentContainer: {

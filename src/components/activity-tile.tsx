@@ -13,7 +13,7 @@ type Props = {
 	onSelect: () => void;
 };
 
-export default function ActivityTile({ isSelected, event, onSelect }: Props) {
+function ActivityTile({ isSelected, event, onSelect }: Props) {
 	return (
 		<>
 			{event.eventData.map((item, index) => (
@@ -52,6 +52,8 @@ export default function ActivityTile({ isSelected, event, onSelect }: Props) {
 		</>
 	);
 }
+
+export default React.memo(ActivityTile);
 
 const styles = StyleSheet.create({
 	activityContainer: {
