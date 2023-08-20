@@ -8,9 +8,14 @@ import CommentTile from "../components/comment-tile";
 import FileIcon from "../../assets/file-icon.svg";
 
 export default function Home() {
+	const [sliceStart, setSliceStart] = React.useState<number>(0);
 	const [sliceCount, setSliceCount] = React.useState<number>(6);
-	const computedEvents = React.useMemo(() => computedSequentialEvents(events), []);
+	const computedEvents = React.useMemo(
+		() => computedSequentialEvents(events, sliceStart, sliceCount),
+		[sliceStart, sliceCount]
+	);
 	const [selectedEvents, setSelectedEvents] = React.useState<number[]>([]);
+	const flatlistRef = React.useRef<FlatList>(null);
 
 	const toggleSelect = (index: number) => {
 		if (selectedEvents.includes(index)) {
@@ -22,23 +27,25 @@ export default function Home() {
 		setSelectedEvents([index, ...selectedEvents]);
 	};
 
-	// const showMoreEvents = () => {
-	// 	const nonVisibleCounts = computedEvents.length - sliceCount;
+	const showMoreEvents = () => {
+		const nonVisibleEvents = events.length - sliceCount;
+		if (nonVisibleEvents === 0) return;
+		flatlistRef.current?.scrollToOffset({ animated: true, offset: 0 });
+		setSliceStart(sliceStart + 6);
 
-	// 	if (nonVisibleCounts === 0) return;
+		if (nonVisibleEvents <= 6) {
+			setSliceCount(nonVisibleEvents + sliceCount);
+			return;
+		}
 
-	// 	if (nonVisibleCounts <= 6) {
-	// 		setSliceCount(sliceCount + nonVisibleCounts);
-	// 		return;
-	// 	}
-
-	// 	setSliceCount(sliceCount + 6);
-	// };
+		setSliceCount(sliceCount + 6);
+	};
 
 	return (
 		<SafeAreaView style={styles.safeAreaView}>
 			<FlatList
-				data={computedEvents.slice(0, sliceCount)}
+				ref={flatlistRef}
+				data={computedEvents}
 				keyExtractor={(_, index) => index.toString()}
 				initialNumToRender={6}
 				renderItem={({ item, index }) =>
@@ -59,14 +66,16 @@ export default function Home() {
 				style={styles.listContainer}
 				contentContainerStyle={styles.listContentContainer}
 				ItemSeparatorComponent={() => <View style={styles.separator} />}
-				ListFooterComponent={() => (
-					<TouchableOpacity style={styles.listFooter}>
-						<FileIcon width={18} height={18} />
-						<Text style={styles.listFooterText}>
-							Show {computedEvents.length - sliceCount} more events
-						</Text>
-					</TouchableOpacity>
-				)}
+				ListFooterComponent={() =>
+					events.length > sliceCount ? (
+						<TouchableOpacity style={styles.listFooter} onPress={showMoreEvents}>
+							<FileIcon width={18} height={18} />
+							<Text style={styles.listFooterText}>
+								Show {events.length - sliceCount} more events
+							</Text>
+						</TouchableOpacity>
+					) : null
+				}
 			/>
 		</SafeAreaView>
 	);
@@ -76,24 +85,10 @@ const styles = StyleSheet.create({
 	safeAreaView: {
 		flex: 1,
 	},
-	listContainer: {
-		// paddingHorizontal: 16,
-	},
+	listContainer: {},
 	listContentContainer: {
 		backgroundColor: "#fff",
 		padding: 20,
-		// paddingLeft: 0,
-		// borderWidth: 1,
-		// borderColor: "#EFDFF4",
-		// borderRadius: 32,
-		// shadowColor: "#000",
-		// shadowOffset: {
-		// 	width: 0,
-		// 	height: 1,
-		// },
-		// shadowOpacity: 0.22,
-		// shadowRadius: 2.22,
-		// elevation: 3,
 	},
 	separator: {
 		height: 1,
