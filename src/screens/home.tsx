@@ -14,21 +14,18 @@ export default function Home() {
 		() => computedSequentialEvents(events, sliceStart, sliceCount),
 		[sliceStart, sliceCount]
 	);
-	const [selectedEvents, setSelectedEvents] = React.useState<number[]>([]);
+
+	const [selectedEvent, setSelectedEvent] = React.useState<number>();
 	const flatlistRef = React.useRef<FlatList>(null);
 
 	const toggleSelect = (index: number) => {
-		if (selectedEvents.includes(index)) {
-			const updatedSelectedEvents = selectedEvents.filter((i) => i !== index);
-			setSelectedEvents(updatedSelectedEvents);
-			return;
-		}
-
-		setSelectedEvents([index, ...selectedEvents]);
+		if (selectedEvent === index) setSelectedEvent(undefined);
+		else setSelectedEvent(index);
 	};
 
 	const showMoreEvents = () => {
 		const nonVisibleEvents = events.length - sliceCount;
+		setSelectedEvent(undefined);
 		if (nonVisibleEvents === 0) return;
 		flatlistRef.current?.scrollToOffset({ animated: true, offset: 0 });
 		setSliceStart(sliceStart + 6);
@@ -51,13 +48,13 @@ export default function Home() {
 				renderItem={({ item, index }) =>
 					item.type === "comment" ? (
 						<CommentTile
-							isSelected={selectedEvents.includes(index)}
+							isSelected={(selectedEvent && selectedEvent > index) || selectedEvent === index}
 							event={item}
 							onSelect={() => toggleSelect(index)}
 						/>
 					) : (
 						<ActivityTile
-							isSelected={selectedEvents.includes(index)}
+							isSelected={(selectedEvent && selectedEvent > index) || selectedEvent === index}
 							event={item}
 							onSelect={() => toggleSelect(index)}
 						/>
