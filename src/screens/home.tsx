@@ -63,9 +63,10 @@ export default function Home() {
 				style={styles.listContainer}
 				contentContainerStyle={styles.listContentContainer}
 				ItemSeparatorComponent={() => <View style={styles.separator} />}
+				ListFooterComponentStyle={styles.listFooter}
 				ListFooterComponent={() =>
 					events.length > sliceCount ? (
-						<TouchableOpacity style={styles.listFooter} onPress={showMoreEvents}>
+						<TouchableOpacity style={styles.listFooterButton} onPress={showMoreEvents}>
 							<FileIcon width={18} height={18} />
 							<Text style={styles.listFooterText}>
 								Show {events.length - sliceCount} more events
@@ -92,6 +93,9 @@ const styles = StyleSheet.create({
 		backgroundColor: "#F1E9F5",
 	},
 	listFooter: {
+		paddingVertical: 42,
+	},
+	listFooterButton: {
 		flexDirection: "row",
 		gap: 18,
 		alignItems: "center",
