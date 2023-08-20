@@ -2,10 +2,9 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { sequentialEventsType } from "../types";
 import AuthorAvatar from "./author-avatar";
-import CircleIcon from "../../assets/circle.svg";
-import CheckmarkIcon from "../../assets/checkmark.svg";
 import UserIcon from "../../assets/user-icon.svg";
 import { formatDistance } from "date-fns";
+import EventCheckbox from "./event-checkbox";
 
 type Props = {
 	isSelected: boolean;
@@ -17,11 +16,7 @@ function CommentTile({ isSelected, event, onSelect }: Props) {
 	return (
 		<TouchableOpacity activeOpacity={0.7} style={styles.commentContainer} onPress={onSelect}>
 			<View style={styles.contentContainer}>
-				{isSelected ? (
-					<CheckmarkIcon width={18} height={18} style={{ marginRight: 18 }} />
-				) : (
-					<CircleIcon width={18} height={18} style={{ marginRight: 18 }} />
-				)}
+				<EventCheckbox isChecked={isSelected} style={{ marginRight: 18 }} />
 				<AuthorAvatar author={event.author} />
 				<Text style={styles.commentText}>{event.author}</Text>
 			</View>

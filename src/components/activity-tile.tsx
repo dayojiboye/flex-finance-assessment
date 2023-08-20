@@ -4,8 +4,7 @@ import AuthorAvatar from "./author-avatar";
 import Icon from "react-native-vector-icons/Octicons";
 import { sequentialEventsType } from "../types";
 import { formatDistance } from "date-fns";
-import CircleIcon from "../../assets/circle.svg";
-import CheckmarkIcon from "../../assets/checkmark.svg";
+import EventCheckbox from "./event-checkbox";
 
 type Props = {
 	isSelected: boolean;
@@ -24,13 +23,7 @@ function ActivityTile({ isSelected, event, onSelect }: Props) {
 					onPress={onSelect}
 				>
 					{index === 0 ? (
-						<>
-							{isSelected ? (
-								<CheckmarkIcon width={18} height={18} />
-							) : (
-								<CircleIcon width={18} height={18} />
-							)}
-						</>
+						<EventCheckbox isChecked={isSelected} />
 					) : (
 						<View style={{ width: 18, height: 18 }} />
 					)}
